@@ -140,9 +140,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     function collideCheck(){
         for(let i =  0 ; i < head.ar.length; i++){
             console.log(head.x, head.ar[i].x);
-            if(head.x === head.ar[i].x){
-                alert("ÇARPIŞMA OLDU");
-            }
+                if(head.y === head.ar[i].y && head.x === head.ar[i].x){
+                    alert("ÇARPIŞMA OLDU");
+                    clearInterval(interval);
+                }
+          
         }
     }
     function update(){
@@ -155,36 +157,40 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
     }
     
-    setInterval(update, 500);
-    
-    document.addEventListener('keydown', (e) =>{
+    let interval = setInterval(update, 500);
 
-        if(e.key==='ArrowUp' && keys.down !==true) {
-            keys.up = true;
-            keys.down = false;
-            keys.left = false;
-            keys.right = false;
-        }
-        else if(e.key==='ArrowDown' && keys.up !== true) {
-            keys.up = false;
-            keys.down = true;
-            keys.left = false;
-            keys.right = false;
-        }
-        else if(e.key==='ArrowLeft' && keys.right !== true){
-            keys.up = false;
-            keys.down = false;
-            keys.left = true;
-            keys.right = false;
-        }
-        else if(e.key==='ArrowRight' && keys.left !== true) {
-            keys.up = false;
-            keys.down = false;
-            keys.left = false;
-            keys.right = true;
-        }
-    });
+    function addKey(){
+        document.addEventListener('keydown', (e) =>{
 
+                if(e.key==='ArrowUp' && keys.down !==true) {
+                    keys.up = true;
+                    keys.down = false;
+                    keys.left = false;
+                    keys.right = false;
+                }
+                else if(e.key==='ArrowDown' && keys.up !== true) {
+                    keys.up = false;
+                    keys.down = true;
+                    keys.left = false;
+                    keys.right = false;
+                }
+                else if(e.key==='ArrowLeft' && keys.right !== true){
+                    keys.up = false;
+                    keys.down = false;
+                    keys.left = true;
+                    keys.right = false;
+                }
+                else if(e.key==='ArrowRight' && keys.left !== true) {
+                    keys.up = false;
+                    keys.down = false;
+                    keys.left = false;
+                    keys.right = true;
+                }
+                
+            
+        });
+    }
 
+    addKey();
 
 });
