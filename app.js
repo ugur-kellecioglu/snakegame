@@ -2,11 +2,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext('2d');
-    canvas.width = 600;
-    canvas.height = 600;
+    canvas.width = 500;
+    canvas.height = 500;
 
+    let updateTime = 200;
     
-
+    let time = 0;
     var head = {
         height: 25,
         width: 25,
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     function renderCanvas(){
         ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, 600, 600);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     } 
     function renderhead(){
         ctx.fillStyle = "green";
@@ -54,11 +55,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
         ctx.fillRect(apple.x, apple.y, apple.width, apple.height);
     }
     function movehead(){
-       
+     
 
         head.prevX = head.x;
         head.prevY = head.y;
-        if(keys.up) {
+        if(keys.up)  {
         
             head.y -= 25;
         }
@@ -113,40 +114,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
         if(head.y < 0) head.y = canvas.height-head.width ;
         if(head.y >= canvas.height) head.y = 0;
 
+      
+    }
+    function gameCheck(){
+        if(head.ar.length === (canvas.width/head.width)*(canvas.height/head.height)){
+            alert("gameover");
+        }
     }
     let score = 0;
-    function appleCheck(){
-        if(apple.x === head.x && apple.y === head.y){
-            console.log("Çarpışma oldu");
-            apple.x= (Math.floor(Math.random() * 10)+1)*25;
-            apple.y=(Math.floor(Math.random() * 10)+1)*25;
-            score++;
-            document.querySelector('#score').innerHTML = score;
-
-            if(keys.up){
-                head.ar.push({x:head.x,y:head.y+25,prevX:head.x, prevY: head.y+25});
-            }
-            if(keys.down){
-                head.ar.push({x:head.x,y:head.y-25,prevX:head.x, prevY: head.y-25});
-            }
-            if(keys.left){
-                head.ar.push({x:head.x+25,y:head.y,prevX:head.x+25, prevY: head.y});
-            }
-            if(keys.right){
-                head.ar.push({x:head.x-25,y:head.y,prevX:head.x-25, prevY: head.y});
-            }
-        }
-    }
-    function collideCheck(){
-        for(let i =  0 ; i < head.ar.length; i++){
-            console.log(head.x, head.ar[i].x);
-                if(head.y === head.ar[i].y && head.x === head.ar[i].x){
-                    alert("ÇARPIŞMA OLDU");
-                    clearInterval(interval);
-                }
-          
-        }
-    }
     function update(){
         renderCanvas();
         createApple();
@@ -154,43 +129,92 @@ document.addEventListener('DOMContentLoaded', ()=>{
         renderhead();
         appleCheck();
         collideCheck();
-        
+        gameCheck();
     }
     
-    let interval = setInterval(update, 500);
+    let interval = setInterval(update, updateTime);
 
-    function addKey(){
-        document.addEventListener('keydown', (e) =>{
+    function appleCheck(){
+        if(apple.x === head.x && apple.y === head.y){
+            updateTime -= 1;
+            clearInterval(interval);
+            interval = setInterval(update, updateTime);
+            apple.x= (Math.floor(Math.random() * 10)+1)*25;
+            apple.y=(Math.floor(Math.random() * 10)+1)*25;
+            score++;
+            document.querySelector('#score').innerHTML = score;
 
-                if(e.key==='ArrowUp' && keys.down !==true) {
-                    keys.up = true;
-                    keys.down = false;
-                    keys.left = false;
-                    keys.right = false;
+            if(keys.up){
+                head.ar.push({x:head.x,y:head.y+25,prevX:head.x, prevY: head.y+25});
+                head.ar.push({x:head.ar.x,y:head.y+50,prevX:head.x, prevY: head.y+50});
+                head.ar.push({x:head.x,y:head.y+75,prevX:head.x, prevY: head.y+75});
+            }
+            if(keys.down){
+                head.ar.push({x:head.x,y:head.y-25,prevX:head.x, prevY: head.y-25});
+                head.ar.push({x:head.x,y:head.y-50,prevX:head.x, prevY: head.y-50});
+                head.ar.push({x:head.x,y:head.y-75,prevX:head.x, prevY: head.y-75});
+            }
+            if(keys.left){
+                head.ar.push({x:head.x+25,y:head.y,prevX:head.x+25, prevY: head.y});
+                head.ar.push({x:head.x+50,y:head.y,prevX:head.x+50, prevY: head.y});
+                head.ar.push({x:head.x+75,y:head.y,prevX:head.x+75, prevY: head.y});
+            }
+            if(keys.right){
+                head.ar.push({x:head.x-25,y:head.y,prevX:head.x-25, prevY: head.y});
+                head.ar.push({x:head.x-50,y:head.y,prevX:head.x-50, prevY: head.y});
+                head.ar.push({x:head.x-75,y:head.y,prevX:head.x-75, prevY: head.y});
+            }
+        }
+    }
+    function collideCheck(){
+        for(let i =  0 ; i < head.ar.length; i++){
+                if(head.y === head.ar[i].y && head.x === head.ar[i].x){
+                    alert("ÇARPIŞMA OLDU");
+                    clearInterval(interval);
                 }
-                else if(e.key==='ArrowDown' && keys.up !== true) {
-                    keys.up = false;
-                    keys.down = true;
-                    keys.left = false;
-                    keys.right = false;
-                }
-                else if(e.key==='ArrowLeft' && keys.right !== true){
-                    keys.up = false;
-                    keys.down = false;
-                    keys.left = true;
-                    keys.right = false;
-                }
-                else if(e.key==='ArrowRight' && keys.left !== true) {
-                    keys.up = false;
-                    keys.down = false;
-                    keys.left = false;
-                    keys.right = true;
-                }
-                
-            
-        });
+          
+        }
     }
 
-    addKey();
+    function addKey(e){
+
+        if(e.key==='ArrowUp' && keys.down !==true) {
+            keys.up = true;
+            keys.down = false;
+            keys.left = false;
+            keys.right = false;
+        }
+        else if(e.key==='ArrowDown' && keys.up !== true) {
+            keys.up = false;
+            keys.down = true;
+            keys.left = false;
+            keys.right = false;
+            
+        }
+        else if(e.key==='ArrowLeft' && keys.right !== true){
+            keys.up = false;
+            keys.down = false;
+            keys.left = true;
+            keys.right = false;
+       
+        }
+        else if(e.key==='ArrowRight' && keys.left !== true) {
+            keys.up = false;
+            keys.down = false;
+            keys.left = false;
+            keys.right = true;
+
+        }
+
+        document.removeEventListener('keydown', addKey);
+        let timeout = setTimeout(addKeyList, updateTime-150);
+
+    }
+    
+    function addKeyList(){
+        document.addEventListener('keydown', addKey);
+    }
+    addKeyList();            
+
 
 });
